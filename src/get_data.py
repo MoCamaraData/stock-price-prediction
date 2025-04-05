@@ -1,25 +1,20 @@
-import yfinance as yf
-import pandas as pd
 import os
+import yfinance as yf
 
-# Define the stock symbol and date range
-stock_symbol = "AAPL"
-start_date = "2010-01-01"
-end_date = "2023-01-01"
+def fetch_and_save_data():
+    # Fetch S&P 500 data for the last 5 years
+    sp500 = yf.Ticker("^GSPC")
+    sp500_data = sp500.history(period="5y")
 
-# Download stock data
-stock_data = yf.download(stock_symbol, start=start_date, end=end_date, progress=False)
+    # Ensure the data directory exists
+    data_dir = "../data"
+    os.makedirs(data_dir, exist_ok=True)
 
-# Reset index so "Date" is a column
-stock_data.reset_index(inplace=True)
+    # Save to CSV file
+    file_path = os.path.join(data_dir, "sp500_5_years_data.csv")
+    sp500_data.to_csv(file_path)
 
-# Ensure 'data' folder exists
-data_folder = "../data"
-os.makedirs(data_folder, exist_ok=True)
+    print(f"Data saved to {file_path}")
 
-# Save to CSV without the extra multi-index header
-csv_path = os.path.join(data_folder, f"{stock_symbol}_stock_data.csv")
-stock_data.to_csv(csv_path, index=False)  # Save without index
-
-print(f"Data saved to {csv_path}")
-print(stock_data.head())
+# Run the function
+fetch_and_save_data()
